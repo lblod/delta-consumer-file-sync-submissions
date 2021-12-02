@@ -124,7 +124,8 @@ Name | Predicate | Range | Definition
 uuid |mu:uuid | xsd:string
 message | oslc:message | xsd:string
 
-## TODO's
+## TODOs
 - update files
+- listen to deltas
 - `<share://extractedTriples> nie:dataSource <share://harvested.html>` is not synced properly.
 - Some easy configurable security
