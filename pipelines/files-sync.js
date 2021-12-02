@@ -22,8 +22,6 @@ export async function startSync() {
 
       let parentTask;
       for(const [ index, fileData ] of filesData.entries()) {
-        //if(index > 0) break;
-
         console.log(`Ingesting file created on ${fileData.pFile}`);
 
         const task = await createFileSyncTask(JOBS_GRAPH, job, `${index}`, STATUS_BUSY, fileData, parentTask);
