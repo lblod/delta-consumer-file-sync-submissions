@@ -1,7 +1,7 @@
 {
   "name": "delta-consumer-file-sync-submissions",
   "version": "0.0.1",
-  "description": "Customizable consumer service to synchronise data from a producer stack",
+  "description": "POC style service responsible for syncing files from remote source",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
