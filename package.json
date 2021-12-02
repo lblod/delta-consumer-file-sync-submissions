@@ -1,7 +1,7 @@
 {
   "name": "delta-consumer-file-sync-submissions",
   "version": "0.0.1",
-  "description": "POC style service responsible for syncing files from remote source",
+  "description": "POC style service responsible for syncing files related to submissions",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

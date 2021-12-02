@@ -1,6 +1,6 @@
 # delta-consumer-file-sync-submissions
 
-POC style service responsible for syncing files from remote source.
+POC style service responsible for syncing files related to submissions
 It is very likely this is subject for improvement, this in terms of robustness, genericity, speed and authorization.
 But we have to start somewhere.
 In our defense, the model is rather complicated (and not respecting the file model defined in [mu-file-service](https://github.com/mu-semtech/file-service)).
