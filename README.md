@@ -3,14 +3,16 @@
 POC style service responsible for syncing files from remote source.
 It is very likely this is subject for improvement, this in terms of robustness, genericity, speed and authorization.
 But we have to start somewhere.
+In our defense, the model is rather complicated (and not respecting the file model defined in [mu-file-service](https://github.com/mu-semtech/file-service)).
 
 ## Flow
  - Periodic job checks wether there are physical files to be synced
- - If found, download, map to virtual file and 'publishes' the new information
+ - If found, download, map to logical file and 'publishes' the new information
 
 ## Assumptions
-- Files are publicly available.
-- Files are availble on the API defined by [mu-file-service](https://github.com/mu-semtech/file-service).
+- Files are publicly available (note: they are cosnsidered public)
+- Files follow a subset of the submissions-model see [here](https://github.com/lblod/import-submission-service)
+- Files are availble on the API defined by [file-service-share](https://github.com/redpencilio/file-service-share).
 - Only addition of files is supported.
 
 ## Configuration
@@ -121,3 +123,8 @@ Name | Predicate | Range | Definition
 --- | --- | --- | ---
 uuid |mu:uuid | xsd:string
 message | oslc:message | xsd:string
+
+## TODO's
+- update files
+- `<share://extractedTriples> nie:dataSource <share://harvested.html>` is not synced properly.
+- Some easy configurable security
