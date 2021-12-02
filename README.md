@@ -129,3 +129,4 @@ message | oslc:message | xsd:string
 - listen to deltas
 - `<share://extractedTriples> nie:dataSource <share://harvested.html>` is not synced properly.
 - Some easy configurable security
+- There is currently no renaming of the files, so make sure to mount ` - ./data/files:/share`
