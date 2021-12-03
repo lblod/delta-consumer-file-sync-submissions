@@ -1,18 +1,18 @@
 import { FILE_SYNC_JOB_OPERATION, JOBS_GRAPH, JOB_CREATOR_URI, SERVICE_NAME } from '../config';
 import { STATUS_BUSY, STATUS_FAILED, STATUS_SUCCESS } from '../lib/constants';
 import { createError, createJobError } from '../lib/error';
-import { downloadFile, getNewFilesToSync, publishPhysicalFile, calculateNewFileData } from '../lib/file-sync-job-utils';
+import { downloadFile, getNewFileToSync, publishPhysicalFile, calculateNewFileData } from '../lib/file-sync-job-utils';
 import { createFileSyncTask } from '../lib/file-sync-task';
 import { createJob, failJob, getJobs } from '../lib/job';
 import { updateStatus } from '../lib/utils';
 
-export async function startSync() {
+export async function startSync(delta) {
   let job;
 
   try {
     await ensureNoPendingJobs();
 
-    const filesData = await getNewFilesToSync();
+    const filesData = await getNewFilesToSync(delta);
     if(!filesData.length) {
       console.log('No fileData found to sync. Doing nothing');
     }
@@ -69,4 +69,17 @@ async function ensureNoPendingJobs(){
   for(const job of jobs){
     await failJob(job.job);
   }
+}
+
+async function getNewFilesToSync(delta){
+  const inserts = delta.map(changeSet => changeSet.inserts).flat();
+  const subjects = [ ...new Set(inserts.map(t => t.suject.value)) ];
+  const files = [];
+  for(const subject of subjects){
+    const file = await getNewFileToSync(file);
+    if(file){
+      files.push(file);
+    }
+  }
+  return files;
 }

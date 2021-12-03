@@ -5,12 +5,21 @@ import {
 } from './config';
 import { ProcessingQueue } from './lib/processing-queue';
 import { startSync } from './pipelines/files-sync';
+import bodyParser from 'body-parser';
 
 const fileSyncQueue = new ProcessingQueue('file-sync-queue');
+
+app.use( bodyParser.json( { type: function(req) { return /^application\/json/.test( req.get('content-type') ); } } ) );
 
 app.get('/', function(req, res) {
   res.send(`Hello, you have reached ${SERVICE_NAME}! I'm doing just fine :)`);
 });
+
+app.post('/delta', async function( req, res ) {
+  try {
+    const body = req.body;
+  }
+}
 
 new CronJob(CRON_PATTERN_FILE_SYNC, async function() {
   console.log(`Status of DISABLE_AUTOMATIC_SYNC: ${DISABLE_AUTOMATIC_SYNC}`);
