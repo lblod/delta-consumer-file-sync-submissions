@@ -6,7 +6,7 @@ import {
 } from './config';
 import { getUnsyncedUris } from './lib/file-sync-job-utils';
 import { ProcessingQueue } from './lib/processing-queue';
-import { startSync } from './pipelines/files-sync';
+import { syncFilesAddition } from './pipelines/files-sync';
 import { waitForDatabase } from './lib/database';
 
 const fileSyncQueue = new ProcessingQueue('file-sync-queue');
@@ -16,7 +16,7 @@ if(!DISABLE_INITIAL_SYNC){
   waitForDatabase(() => {
     fileSyncQueue.addJob(async () => {
       const unsyncedFileUris = await getUnsyncedUris();
-      await startSync(unsyncedFileUris.map(t => t.pFile));
+      await syncFilesAddition(unsyncedFileUris.map(t => t.pFile));
       console.log(`Initial sync was success`);
     });
   });
@@ -39,7 +39,7 @@ app.post('/delta', async function(req, res){
 
     if(subjects.length){
       fileSyncQueue.addJob(async () => {
-        await startSync(subjects);
+        await syncFilesAddition(subjects);
       });
     }
   }
@@ -55,7 +55,7 @@ new CronJob(CRON_PATTERN_HEALING_SYNC, async function() {
     console.info(`Delta healing sync triggered by cron job at ${now}`);
     fileSyncQueue.addJob(async () => {
       const unsyncedFileUris = await getUnsyncedUris();
-      await startSync(unsyncedFileUris.map(t => t.pFile));
+      await syncFilesAddition(unsyncedFileUris.map(t => t.pFile));
     });
   }
 }, null, true);
@@ -67,7 +67,7 @@ new CronJob(CRON_PATTERN_HEALING_SYNC, async function() {
 app.post('/file-sync-jobs', async function( _, res ){
   fileSyncQueue.addJob(async () => {
     const unsyncedFileUris = await getUnsyncedUris();
-    await startSync(unsyncedFileUris.map(t => t.pFile));
+    await syncFilesAddition(unsyncedFileUris.map(t => t.pFile));
   });
   res.send({ msg: 'Started file sync job' });
 });

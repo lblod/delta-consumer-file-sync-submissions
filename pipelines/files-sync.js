@@ -6,7 +6,7 @@ import { createFileSyncTask } from '../lib/file-sync-task';
 import { createJob, failJob, getJobs } from '../lib/job';
 import { updateStatus } from '../lib/utils';
 
-export async function startSync(unsyncedFileUris) {
+export async function syncFileAddition(unsyncedFileUris) {
   let job;
 
   try {
