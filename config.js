@@ -1,10 +1,11 @@
 // CONFIGURATION
 export const DOWNLOAD_FILE_PATH = process.env.DCR_DOWNLOAD_FILE_PATH || '/delta-files-share/download?uri=:uri';
-export const CRON_PATTERN_FILE_SYNC = process.env.CRON_PATTERN_FILE_SYNC || '0 * * * * *'; // every minute
+export const CRON_PATTERN_HEALING_SYNC = process.env.CRON_PATTERN_HEALING_SYNC || '0 5 4 * * *'; // every minute
 export const SERVICE_NAME = process.env.SERVICE_NAME || 'delta-consumer-file-sync-submissions';
 export const FILE_SYNC_JOB_OPERATION = process.env.FILE_SYNC_JOB_OPERATION
   || 'http://redpencil.data.gift/id/jobs/concept/JobOperation/deltas/consumer/physicalFileSync';
 export const DISABLE_AUTOMATIC_SYNC = process.env.DISABLE_AUTOMATIC_SYNC == 'true' ? true : false;
+export const DISABLE_INITIAL_SYNC = process.env.DISABLE_INITIAL_SYNC == 'true' ? true : false;
 
 // GRAPHS
 export const JOBS_GRAPH = process.env.JOBS_GRAPH || 'http://mu.semte.ch/graphs/system/jobs';

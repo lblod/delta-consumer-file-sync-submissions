@@ -30,8 +30,9 @@ consumer:
     - ./data/files:/share
 ```
 ### Environment variables
+- `DISABLE_INITIAL_SYNC (default: false)`: disables the initial sync
 - `DOWNLOAD_FILE_PATH (default: '/delta-files-share/download?uri=:id')`:  path to download [file-service-share](https://github.com/redpencilio/file-service-share)
-- `CRON_PATTERN_FILE_SYNC (default '0 * * * * *')`:  cron pattern to trigger ingest job
+- `CRON_PATTERN_HEALING_SYNC (default '0 5 4 * * *')`:  cron pattern to trigger healing job
 - `SERVICE_NAME (default 'delta-consumer-file-sync-submissions')`: name of the service
 - `FILE_SYNC_JOB_OPERATION (default: http://redpencil.data.gift/id/jobs/concept/JobOperation/deltas/consumer/physicalFileSync)`:  name of the job to sync files
 - `DISABLE_AUTOMATIC_SYNC (default: false)`: mainly for debugging purposes
