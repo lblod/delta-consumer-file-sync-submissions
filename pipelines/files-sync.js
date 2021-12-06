@@ -1,20 +1,30 @@
 import { FILE_SYNC_JOB_OPERATION, JOBS_GRAPH, JOB_CREATOR_URI, SERVICE_NAME } from '../config';
 import { STATUS_BUSY, STATUS_FAILED, STATUS_SUCCESS } from '../lib/constants';
 import { createError, createJobError } from '../lib/error';
-import { downloadFile, getNewFileToSync, publishPhysicalFile, calculateNewFileData } from '../lib/file-sync-job-utils';
+import { downloadFile, getFileDataTosync, getUnsyncedUris, publishPhysicalFile, calculateNewFileData } from '../lib/file-sync-job-utils';
 import { createFileSyncTask } from '../lib/file-sync-task';
 import { createJob, failJob, getJobs } from '../lib/job';
 import { updateStatus } from '../lib/utils';
 
-export async function startSync(delta) {
+export async function startSync(unsyncedFileUris) {
   let job;
 
   try {
+    //Note: it is ok to fail these, because we assume it is running in a queue. So there is no way
+    // a job in status busy was effectively doing something
     await ensureNoPendingJobs();
 
-    const filesData = await getNewFilesToSync(delta);
+    const filesData = [];
+
+    for(const fileUri of unsyncedFileUris){
+      const fileData = await getFileDataTosync(fileUri);
+      if(fileData){
+        filesData.push(fileData);
+      }
+    }
+
     if(!filesData.length) {
-      console.log('No fileData found to sync. Doing nothing');
+      console.log('No fileUris found which were ready for sync. Doing nothing');
     }
     else {
 
