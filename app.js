@@ -17,6 +17,7 @@ if(!DISABLE_INITIAL_SYNC){
     fileSyncQueue.addJob(async () => {
       const unsyncedFileUris = await getUnsyncedUris();
       await startSync(unsyncedFileUris.map(t => t.pFile));
+      console.log(`Initial sync was success`);
     });
   });
 }
