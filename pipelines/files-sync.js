@@ -80,16 +80,3 @@ async function ensureNoPendingJobs(){
     await failJob(job.job);
   }
 }
-
-async function getNewFilesToSync(delta){
-  const inserts = delta.map(changeSet => changeSet.inserts).flat();
-  const subjects = [ ...new Set(inserts.map(t => t.suject.value)) ];
-  const files = [];
-  for(const subject of subjects){
-    const file = await getNewFileToSync(file);
-    if(file){
-      files.push(file);
-    }
-  }
-  return files;
-}
