@@ -127,7 +127,6 @@ message | oslc:message | xsd:string
 
 ## TODOs
 - update files
-- listen to deltas
-- `<share://extractedTriples> nie:dataSource <share://harvested.html>` is not synced properly.
+- `<share://extractedTriples> nie:dataSource <share://harvested.html>` is not synced properly. (i.e. triples from harvested files)
 - Some easy configurable security
 - There is currently no renaming of the files, so make sure to mount ` - ./data/files:/share`
