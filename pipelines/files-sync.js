@@ -70,8 +70,6 @@ export async function startSync(unsyncedFileUris) {
 }
 
 async function ensureNoPendingJobs(){
-  //Note: it is ok to fail these, because we assume it is running in a queue. So there is no way
-  // a job in status busy was effectively doing something
   console.log(`Verify whether there are hanging jobs`);
   const jobs = await getJobs(FILE_SYNC_JOB_OPERATION, [ STATUS_BUSY ]);
   console.log(`Found ${jobs.length} hanging jobs, failing them first`);
