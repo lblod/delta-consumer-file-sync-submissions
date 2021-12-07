@@ -104,7 +104,7 @@ async function getFileDataToProcessHelper(fileUris, queryFunction){
   for(const fileUri of fileUris){
     const fileData = await queryFunction(fileUri);
     if(fileData){
-      queryFunction.push(fileData);
+      results.push(fileData);
     }
   }
   return results;
