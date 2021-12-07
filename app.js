@@ -56,10 +56,12 @@ app.post('/delta', async function(req, res){
   else {
     const changeSets = req.body;
     for(const changeSet of changeSets){
-      const deletes = [ ...new Set(changeSet.deletes(t => t.subject.value)) ];
-      const inserts = [ ...new Set(changeSet.inserts(t => t.subject.value)) ];
+      const deletes = [ ...new Set(changeSet.deletes.map(t => t.subject.value)) ];
+      const inserts = [ ...new Set(changeSet.inserts.map(t => t.subject.value)) ];
       fileSyncQueue.addJob(async () => {
-        await syncFile(deletes, inserts);
+        //The information is based on the oldUri, the pipeline expects the mapped Uri
+        const urisToDelete = await getUrisToDelete(deletes);
+        await syncFile(urisToDelete, inserts);
       });
     }
   }
