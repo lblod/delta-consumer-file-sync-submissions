@@ -129,4 +129,3 @@ message | oslc:message | xsd:string
 - update files
 - `<share://extractedTriples> nie:dataSource <share://harvested.html>` is not synced properly. (i.e. triples from harvested files)
 - Some easy configurable security
-- There is currently no renaming of the files, so make sure to mount ` - ./data/files:/share`
