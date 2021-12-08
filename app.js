@@ -2,12 +2,16 @@ import bodyParser from 'body-parser';
 import { CronJob } from 'cron';
 import { app, errorHandler } from 'mu';
 import {
-    CRON_PATTERN_HEALING_SYNC, DISABLE_AUTOMATIC_SYNC, DISABLE_INITIAL_SYNC, SERVICE_NAME
+    CRON_PATTERN_HEALING_SYNC, DISABLE_AUTOMATIC_SYNC, DISABLE_INITIAL_SYNC, FILE_SYNC_JOB_OPERATION, SERVICE_NAME
 } from './config';
+import {
+    STATUS_BUSY
+} from './lib/constants';
 import { waitForDatabase } from './lib/database';
-import { getUrisToDelete, getUrisToSync } from './lib/file-sync-job-utils';
+import { getFilesReadyForRemoval, getFilesReadyForSync } from './lib/file-sync-job-utils';
+import { failJob, getJobs } from './lib/job';
 import { ProcessingQueue } from './lib/processing-queue';
-import { syncFile } from './pipelines/files-sync';
+import { runFilesCreation, runFilesRemoval } from './pipelines/files-sync';
 
 const fileSyncQueue = new ProcessingQueue('file-sync-queue');
 
@@ -17,12 +21,7 @@ const fileSyncQueue = new ProcessingQueue('file-sync-queue');
 
 console.log(`Status DISABLE_INITIAL_SYNC: ${DISABLE_INITIAL_SYNC}`);
 if(!DISABLE_INITIAL_SYNC){
-  waitForDatabase(() => {
-    fileSyncQueue.addJob(async () => {
-      await syncFile(await getUrisToDelete(), await getUrisToSync());
-      console.log(`Initial sync was success`);
-    });
-  });
+  waitForDatabase(scheduleFullSync);
 }
 
 new CronJob(CRON_PATTERN_HEALING_SYNC, async function() {
@@ -32,10 +31,7 @@ new CronJob(CRON_PATTERN_HEALING_SYNC, async function() {
   else {
     const now = new Date().toISOString();
     console.info(`Delta healing sync triggered by cron job at ${now}`);
-    fileSyncQueue.addJob(async () => {
-      await syncFile(await getUrisToDelete(), await getUrisToSync());
-      console.log(`Healing sync was success`);
-    });
+    await scheduleFullSync();
   }
 }, null, true);
 
@@ -59,9 +55,16 @@ app.post('/delta', async function(req, res){
       const deletes = [ ...new Set(changeSet.deletes.map(t => t.subject.value)) ];
       const inserts = [ ...new Set(changeSet.inserts.map(t => t.subject.value)) ];
       fileSyncQueue.addJob(async () => {
-        //The information is based on the oldUri, the pipeline expects the mapped Uri
-        const urisToDelete = await getUrisToDelete(deletes);
-        await syncFile(urisToDelete, inserts);
+
+        const filesToRemove = deletes.length ? await getFilesReadyForRemoval(deletes) : [] ;
+        const filesToAdd = inserts.length ? await getFilesReadyForSync(inserts) : [];
+
+        if(filesToAdd.length || filesToRemove.length){
+          await ensureNoPendingJobs();
+        }
+
+        await runFilesRemoval(filesToRemove);
+        await runFilesCreation(filesToAdd);
       });
     }
   }
@@ -73,10 +76,32 @@ app.post('/delta', async function(req, res){
  **/
 
 app.post('/file-sync-jobs', async function( _, res ){
-  fileSyncQueue.addJob(async () => {
-    await syncFile(await getUrisToDelete(), await getUrisToSync());
-  });
-  res.send({ msg: 'Started file sync job' });
+  await scheduleFullSync();
+  res.send({ msg: 'Scheduled file sync job' });
 });
 
 app.use(errorHandler);
+
+/**
+ * HELPERS
+ **/
+async function ensureNoPendingJobs(){
+  console.log(`Verify whether there are hanging jobs`);
+  const jobs = await getJobs(FILE_SYNC_JOB_OPERATION, [ STATUS_BUSY ]);
+  console.log(`Found ${jobs.length} hanging jobs, failing them first`);
+
+  for(const job of jobs){
+    await failJob(job.job);
+  }
+}
+
+async function scheduleFullSync(){
+  fileSyncQueue.addJob(async () => {
+    await ensureNoPendingJobs();
+    const filesToRemove = await getFilesReadyForRemoval();
+    await runFilesRemoval(filesToRemove);
+    const filesToAdd = await getFilesReadyForSync();
+    await runFilesCreation(filesToAdd);
+    console.log(`Full sync finished`);
+  });
+}
