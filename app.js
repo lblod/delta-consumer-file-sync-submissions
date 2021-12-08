@@ -62,9 +62,12 @@ app.post('/delta', async function(req, res){
         if(filesToAdd.length || filesToRemove.length){
           await ensureNoPendingJobs();
         }
-
-        await runFilesRemoval(filesToRemove);
-        await runFilesCreation(filesToAdd);
+        if(filesToRemove.length){
+          await runFilesRemoval(filesToRemove);
+        }
+        if(filesToAdd.length){
+          await runFilesCreation(filesToAdd);
+        }
       });
     }
   }
@@ -99,9 +102,13 @@ async function scheduleFullSync(){
   fileSyncQueue.addJob(async () => {
     await ensureNoPendingJobs();
     const filesToRemove = await getFilesReadyForRemoval();
-    await runFilesRemoval(filesToRemove);
+    if(filesToRemove.length){
+      await runFilesRemoval(filesToRemove);
+    }
     const filesToAdd = await getFilesReadyForSync();
-    await runFilesCreation(filesToAdd);
+    if(filesToAdd.length){
+      await runFilesCreation(filesToAdd);
+    }
     console.log(`Full sync finished`);
   });
 }
