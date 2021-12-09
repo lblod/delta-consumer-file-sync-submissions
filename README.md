@@ -6,7 +6,7 @@ But we have to start somewhere.
 In our defense, the model is rather complicated (and not respecting the file model defined in [mu-file-service](https://github.com/mu-semtech/file-service)).
 
 ## Flow
- - Periodic job checks wether there are physical files to be synced
+ - Periodic job checks (healing) or incoming deltas wether there are physical files to be synced
  - If found, download, map to logical file and 'publishes' the new information
 
 ## Assumptions
