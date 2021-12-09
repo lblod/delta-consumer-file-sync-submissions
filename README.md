@@ -6,14 +6,14 @@ But we have to start somewhere.
 In our defense, the model is rather complicated (and not respecting the file model defined in [mu-file-service](https://github.com/mu-semtech/file-service)).
 
 ## Flow
- - Periodic job checks wether there are physical files to be synced
+ - Periodic job checks (healing) or incoming deltas wether there are physical files to be synced
  - If found, download, map to logical file and 'publishes' the new information
 
 ## Assumptions
 - Files are publicly available (note: they are cosnsidered public)
 - Files follow a subset of the submissions-model see [here](https://github.com/lblod/import-submission-service)
 - Files are availble on the API defined by [file-service-share](https://github.com/redpencilio/file-service-share).
-- Only addition of files is supported.
+- Only addition and deletion full files is supported.
 
 ## Configuration
 ### Add the service to a stack.
