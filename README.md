@@ -13,7 +13,7 @@ In our defense, the model is rather complicated (and not respecting the file mod
 - Files are publicly available (note: they are cosnsidered public)
 - Files follow a subset of the submissions-model see [here](https://github.com/lblod/import-submission-service)
 - Files are availble on the API defined by [file-service-share](https://github.com/redpencilio/file-service-share).
-- Only addition of files is supported.
+- Only addition and deletion full files is supported.
 
 ## Configuration
 ### Add the service to a stack.
