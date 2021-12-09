@@ -22,16 +22,15 @@ export async function runFilesRemoval(filesData){
       try {
         await deleteFileMeta(fileData);
         await deleteFile(fileData);
+        await updateStatus(task, STATUS_SUCCESS);
+        console.log(`Sucessfully deleted file file ${fileData.pFile}`);
       }
       catch(error){
         console.error(`Task ${task} failed`);
         console.error(error);
         await updateStatus(task, STATUS_FAILED);
       }
-
-      await updateStatus(task, STATUS_SUCCESS);
       parentTask = task;
-      console.log(`Sucessfully deleted file file ${fileData.pFile}`);
     }
     await updateStatus(job, STATUS_SUCCESS);
   }
@@ -62,6 +61,8 @@ export async function runFilesCreation(filesData){
         await downloadFile(fileData, newFileData);
         //TODO: refine this, as to have real new URI's
         await publishPhysicalFile(fileData, newFileData);
+        await updateStatus(task, STATUS_SUCCESS);
+        console.log(`Sucessfully ingested file ${fileData.pFile}`);
       }
       catch(error){
         //TODO: log error
@@ -69,11 +70,7 @@ export async function runFilesCreation(filesData){
         console.error(error);
         await updateStatus(task, STATUS_FAILED);
       }
-
-      await updateStatus(task, STATUS_SUCCESS);
       parentTask = task;
-      console.log(`Sucessfully ingested file ${fileData.pFile}`);
-
     }
     await updateStatus(job, STATUS_SUCCESS);
   }
