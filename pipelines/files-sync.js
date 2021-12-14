@@ -57,10 +57,8 @@ export async function runFilesCreation(filesData){
       console.log(`Ingesting file created on ${fileData.pFile}`);
       const task = await createFileSyncTask(JOBS_GRAPH, job, `${index}`, STATUS_BUSY, fileData, parentTask);
       try {
-        const newFileData = calculateNewFileData(fileData);
-        await downloadFile(fileData, newFileData);
-        //TODO: refine this, as to have real new URI's
-        await publishPhysicalFile(fileData, newFileData);
+        await downloadFile(fileData);
+        await publishPhysicalFile(fileData);
         await updateStatus(task, STATUS_SUCCESS);
         console.log(`Sucessfully ingested file ${fileData.pFile}`);
       }

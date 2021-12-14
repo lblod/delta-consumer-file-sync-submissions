@@ -112,7 +112,7 @@ Name | Predicate | Range | Definition
 --- | --- | --- | ---
 uuid |mu:uuid | xsd:string
 subject | dct:subject | skos:Concept | Provides some information about the content
-hasFile | task:hasFile | the virtual file we are syncing
+hasFile | task:hasPhysicalFile | the physical file we are syncing
 
 #### Error
 
