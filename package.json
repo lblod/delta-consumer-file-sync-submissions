@@ -1,6 +1,6 @@
 {
   "name": "delta-consumer-file-sync-submissions",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "POC style service responsible for syncing files related to submissions",
   "main": "app.js",
   "scripts": {
